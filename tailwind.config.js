@@ -1,4 +1,4 @@
-// tailwind.config.js (CP04)
+// tailwind.config.js (CP04 - Blue Color Scheme)
 
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
@@ -20,28 +20,30 @@ const config = {
 		extend: {
 			colors: {
 				primary: {
-					50: '#f2fef5',
-					100: '#e6fce9',
-					200: '#c3f7cd',
-					300: '#99efae',
-					400: '#66e18a',
-					500: '#3dc66a',
-					600: '#2ea653',
-					700: '#238346',
-					800: '#1c653a',
-					900: '#144d2f'
+					50: '#eff6ff',
+					100: '#dbeafe',
+					200: '#bfdbfe',
+					300: '#93c5fd',
+					400: '#60a5fa',
+					500: '#3b82f6',
+					600: '#2563eb',
+					700: '#1d4ed8',
+					800: '#1e40af',
+					900: '#1e3a8a',
+					950: '#172554'
 				},
 				secondary: {
-					50: '#fffdf5',
-					100: '#fff8e6',
-					200: '#feefc3',
-					300: '#fde494',
-					400: '#fdd666',
-					500: '#fbbf24',
-					600: '#d99b12',
-					700: '#b47a0a',
-					800: '#8f5f09',
-					900: '#734a07'
+					50: '#f8fafc',
+					100: '#f1f5f9',
+					200: '#e2e8f0',
+					300: '#cbd5e1',
+					400: '#94a3b8',
+					500: '#64748b',
+					600: '#475569',
+					700: '#334155',
+					800: '#1e293b',
+					900: '#0f172a',
+					950: '#020617'
 				}
 			},
 			fontFamily: {
