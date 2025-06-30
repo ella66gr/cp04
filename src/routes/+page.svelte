@@ -1,2 +1,2 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<h1>Welcome to the <span class="text-orange-500">GenderSense Marketing Content Control Panel</span></h1>
+<p>Ella Green June 2025</p>

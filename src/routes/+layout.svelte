@@ -8,21 +8,6 @@
     NavUl,
     NavLi
   } from 'flowbite-svelte';
-  import {
-    Sidebar,
-    SidebarBrand,
-    SidebarCta,
-    SidebarDropdownItem,
-    SidebarDropdownWrapper,
-    SidebarGroup,
-    SidebarItem,
-    SidebarWrapper
-  } from "flowbite-svelte";
-  import {
-    HomeOutline,
-    InfoCircleOutline
-  } from 'flowbite-svelte-icons';
-  
   import { DarkMode } from 'flowbite-svelte';
 
 </script>
