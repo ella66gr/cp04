@@ -37,7 +37,7 @@
 			Nav 1<ChevronDownOutline class="text-primary-800 ms-2 inline h-6 w-6 dark:text-white" />
 		</NavLi>
 		<Dropdown simple class="w-44" {activeUrl}>
-			<DropdownItem href="/placeholder-1">Placeholder Page 1</DropdownItem>
+			<DropdownItem href="/nav-1">Nav-1</DropdownItem>
 		</Dropdown>
 
 		<!-- Components group -->
@@ -45,7 +45,7 @@
 			Nav 2<ChevronDownOutline class="text-primary-800 ms-2 inline h-6 w-6 dark:text-white" />
 		</NavLi>
 		<Dropdown simple class="w-52" {activeUrl}>
-			<DropdownItem href="/placeholder-2">Placeholder Page 2</DropdownItem>
+			<DropdownItem href="/nav-2">Nav-2</DropdownItem>
 		</Dropdown>
 	</NavUl>
 
