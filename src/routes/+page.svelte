@@ -277,7 +277,7 @@
         <div class="mb-6 grid gap-8 md:grid-cols-3">
 
           <!-- Col 1 -->
-          <div class="mb-4 col-span-1">
+          <div class="mb-0 col-span-1">
             <Label for="feed_name" class="block mb-2">Feed Name</Label>
             <Input 
               type="text" 
@@ -316,7 +316,7 @@
         </div>
 
         <!-- FEED DISPLAY TABLE -->
-        <div class="mt-8 overflow-x-auto">
+        <div class="mt-6 overflow-x-auto">
 
           <Table shadow>
             <TableHead>
