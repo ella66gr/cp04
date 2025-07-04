@@ -23,7 +23,7 @@
 <Navbar>
 	<NavBrand href="/">
 		<span
-			class="text-4xl font-semibold whitespace-nowrap text-gray-500 dark:text-gray-400"
+			class="text-4xl pl-2 font-semibold whitespace-nowrap text-gray-500 dark:text-gray-400"
 			>CP04 <span class="text-black">Profile Editor</span></span
 		>
 	</NavBrand>

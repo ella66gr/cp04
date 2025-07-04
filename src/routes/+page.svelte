@@ -50,14 +50,7 @@
   };
 
   // RSS Feed data with selection state
-  let rssFeeds = [
-    { id: 1, name: "Pink News", url: "https://www.thepinknews.com/feed/", status: "active", selected: false },
-    { id: 2, name: "Queer AF", url: "https://www.wearequeeraf.com/rss/", status: "active", selected: false },
-    { id: 3, name: "ASD News", url: "https://medicalxpress.com/rss-feed/breaking/autism-spectrum-news/", status: "paused", selected: false },
-    { id: 4, name: "Trans Lifeline Blog", url: "https://translifeline.org/blog/", status: "active", selected: false },
-    { id: 5, name: "LGBTQ Nation", url: "https://www.lgbtqnation.com/feed/", status: "paused", selected: false },
-    { id: 6, name: "The Trans Advocate", url: "https://www.transadvocate.com/feed", status: "active", selected: false }
-  ];
+  let rssFeeds: RSSFeed[] = [];
 
   // Storage key
   const STORAGE_KEY = 'cp04_profile_data';
@@ -385,15 +378,8 @@
         transRights: false
       };
       
-      // Reset to default RSS feeds
-      rssFeeds = [
-        { id: 1, name: "Pink News", url: "https://www.thepinknews.com/feed/", status: "active", selected: false },
-        { id: 2, name: "Queer AF", url: "https://www.wearequeeraf.com/rss/", status: "active", selected: false },
-        { id: 3, name: "ASD News", url: "https://medicalxpress.com/rss-feed/breaking/autism-spectrum-news/", status: "paused", selected: false },
-        { id: 4, name: "Trans Lifeline Blog", url: "https://translifeline.org/blog/", status: "active", selected: false },
-        { id: 5, name: "LGBTQ Nation", url: "https://www.lgbtqnation.com/feed/", status: "paused", selected: false },
-        { id: 6, name: "The Trans Advocate", url: "https://www.transadvocate.com/feed", status: "active", selected: false }
-      ];
+      // Reset to empty RSS feeds
+      rssFeeds = [];
       
       console.log('All profile data cleared');
     }
@@ -466,7 +452,7 @@
       return;
     }
 
-    const nextId = Math.max(...rssFeeds.map(feed => feed.id)) + 1;
+    const nextId = rssFeeds.length > 0 ? Math.max(...rssFeeds.map(feed => feed.id)) + 1 : 1;
 
     const newFeed = {
       id: nextId,
@@ -646,7 +632,7 @@
               id="feed_name" 
               placeholder="Example News" 
               bind:value={newFeedName}
-              class="w-full mb-4"
+              class="w-full mb-6"
             />
 
             <Button 
