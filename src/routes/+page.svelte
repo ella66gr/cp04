@@ -3,17 +3,14 @@
 <script lang="ts">
   import { 
     Button,
-    ButtonGroup,
     Dropdown,
     DropdownItem,
     Card,
     Input,
     Textarea,
-    InputAddon,
     Label,
     Helper,
     Checkbox,
-    A,
     Select,
     Badge, 
     Range
@@ -37,6 +34,7 @@
   let profile_description = '';
   let tone_of_voice = '';
   let stepValue = 150;
+  let newRssUrl = ''; // New variable for RSS input
 
   // RSS Feed data with selection state
   let rssFeeds = [
@@ -82,6 +80,54 @@
       selected: shouldSelectAll
     }));
     console.log('Select all toggled:', shouldSelectAll);
+  };
+
+  // Add new RSS feed function
+  const handleAddNewSource = () => {
+    // Validate URL
+    if (!newRssUrl.trim()) {
+      alert('Please enter a valid RSS feed URL');
+      return;
+    }
+
+    // Simple URL validation
+    try {
+      new URL(newRssUrl);
+    } catch {
+      alert('Please enter a valid URL');
+      return;
+    }
+
+    // Check for duplicates
+    const isDuplicate = rssFeeds.some(feed => feed.url === newRssUrl.trim());
+    if (isDuplicate) {
+      alert('This RSS feed URL already exists');
+      return;
+    }
+
+    // Extract domain name for feed name
+    const urlObj = new URL(newRssUrl);
+    const domainName = urlObj.hostname.replace('www.', '').split('.')[0];
+    const feedName = domainName.charAt(0).toUpperCase() + domainName.slice(1);
+
+    // Get next ID
+    const nextId = Math.max(...rssFeeds.map(feed => feed.id)) + 1;
+
+    // Add new feed
+    const newFeed = {
+      id: nextId,
+      name: feedName,
+      url: newRssUrl.trim(),
+      status: "active",
+      selected: false
+    };
+
+    rssFeeds = [...rssFeeds, newFeed];
+    
+    // Clear the input
+    newRssUrl = '';
+    
+    console.log('Added new RSS feed:', newFeed);
   };
 
 </script>
@@ -184,7 +230,7 @@
 
             <!-- CATEGORY TAGS -->
             <h5 class="mt-8 mb-2 text-sm">Available Category Tags (e.g. newsletter sections)</h5>
-            <Card class="p-4 sm:p-6 md:p-8 min-w-full shadow-xs">
+            <Card class="p-4 sm:p-6 md:p-8 min-w-full shadow-sm">
                         
               <Checkbox aria-describedby="news-helper">In the News</Checkbox>
               <Helper id="news-helper" class="ps-7 mb-4">News items of general Trans+ interest</Helper>
@@ -220,9 +266,21 @@
         <form>
           <div class="mb-4">
             <Label for="rss_feed" class="block mb-2">RSS Feed URL</Label>
-            <Input type="url" id="rss_feed" placeholder="https://example.com/rss" required class="w-full mb-4"/>
+            <Input 
+              type="url" 
+              id="rss_feed" 
+              placeholder="https://example.com/rss" 
+              bind:value={newRssUrl}
+              class="w-full mb-4"
+            />
           </div>
-          <Button color="primary">Add New Source</Button>
+          <Button 
+            type="button"
+            color="primary" 
+            onclick={handleAddNewSource}
+          >
+            Add New Source
+          </Button>
         </form>
 
         <!-- FEED DISPLAY TABLE -->
