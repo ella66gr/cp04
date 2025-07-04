@@ -268,49 +268,43 @@
 
         <div class="mb-6 grid gap-8 md:grid-cols-3">
 
-          <div> <!-- Col 1 -->
-            <form>
+          <!-- Col 1 -->
+          <div class="mb-4 col-span-1">
+            <Label for="rss_feed" class="block mb-2">Feed Name</Label>
+            <Input 
+              type="url" 
+              id="rss_feed" 
+              placeholder="Example News" 
+              bind:value={newFeedName}
+              class="w-full mb-4"
+            />
 
-              <div class="mb-4">
-                <Label for="rss_feed" class="block mb-2">Feed Name</Label>
-                <Input 
-                  type="url" 
-                  id="rss_feed" 
-                  placeholder="Example News" 
-                  bind:value={newFeedName}
-                  class="w-full mb-4"
-                />
-              </div>
-              <Button 
-                type="button"
-                color="primary" 
-                onclick={handleAddNewSource}
-              >
-                Add New Source
-              </Button>
+            <Button 
+              type="button"
+              color="primary" 
+              onclick={handleAddNewSource}
+            >
+            Add New Source
+            </Button>
 
-            </form>
           </div>
-          <div class="col-span-2"> <!-- Col 2 -->
-            <form>
 
-              <div class="mb-4">
-                <Label for="rss_feed" class="block mb-2">RSS Feed URL</Label>
-                <Input 
-                  type="url" 
-                  id="rss_feed" 
-                  placeholder="https://example.com/rss" 
-                  bind:value={newRssUrl}
-                  class="w-full mb-4"
-                />
-              </div>
-
-            </form>
+          <!-- Col 2 -->
+          <div class="mb-4 col-span-2">
+            <Label for="rss_feed" class="block mb-2">RSS Feed URL</Label>
+            <Input 
+              type="url" 
+              id="rss_feed" 
+              placeholder="https://example.com/rss" 
+              bind:value={newRssUrl}
+              class="w-full mb-4"
+            />
           </div>
 
           <div> <!-- Col 3 -->
-
+          <!-- Empty -->
           </div>
+
         </div>
 
         <!-- FEED DISPLAY TABLE -->
