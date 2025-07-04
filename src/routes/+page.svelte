@@ -35,6 +35,7 @@
   let tone_of_voice = '';
   let stepValue = 150;
   let newRssUrl = ''; // New variable for RSS input
+  let newFeedName = ''; // New variable for feed name input
 
   // RSS Feed data with selection state
   let rssFeeds = [
@@ -164,6 +165,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
       <!-- Top section input fields  -->
+
+      <!-- GRID -->
       <form>
         <div class="mb-6 grid gap-8 md:grid-cols-2">
           <div>
@@ -263,25 +266,52 @@
         <h2 class="text-lg font-semibold mb-4">RSS Feeds</h2>
         <p class="text-gray-600 dark:text-gray-300 mb-4">Add RSS feeds to be used for content generation.</p>
 
-        <form>
-          <div class="mb-4">
-            <Label for="rss_feed" class="block mb-2">RSS Feed URL</Label>
-            <Input 
-              type="url" 
-              id="rss_feed" 
-              placeholder="https://example.com/rss" 
-              bind:value={newRssUrl}
-              class="w-full mb-4"
-            />
+        <div class="mb-6 grid gap-8 md:grid-cols-3">
+
+          <div> <!-- Col 1 -->
+            <form>
+
+              <div class="mb-4">
+                <Label for="rss_feed" class="block mb-2">Feed Name</Label>
+                <Input 
+                  type="url" 
+                  id="rss_feed" 
+                  placeholder="Example News" 
+                  bind:value={newFeedName}
+                  class="w-full mb-4"
+                />
+              </div>
+              <Button 
+                type="button"
+                color="primary" 
+                onclick={handleAddNewSource}
+              >
+                Add New Source
+              </Button>
+
+            </form>
           </div>
-          <Button 
-            type="button"
-            color="primary" 
-            onclick={handleAddNewSource}
-          >
-            Add New Source
-          </Button>
-        </form>
+          <div class="col-span-2"> <!-- Col 2 -->
+            <form>
+
+              <div class="mb-4">
+                <Label for="rss_feed" class="block mb-2">RSS Feed URL</Label>
+                <Input 
+                  type="url" 
+                  id="rss_feed" 
+                  placeholder="https://example.com/rss" 
+                  bind:value={newRssUrl}
+                  class="w-full mb-4"
+                />
+              </div>
+
+            </form>
+          </div>
+
+          <div> <!-- Col 3 -->
+
+          </div>
+        </div>
 
         <!-- FEED DISPLAY TABLE -->
         <div class="mt-8 overflow-x-auto">
