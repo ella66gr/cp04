@@ -184,7 +184,7 @@
 
             <!-- CATEGORY TAGS -->
             <h5 class="mt-8 mb-2 text-sm">Available Category Tags (e.g. newsletter sections)</h5>
-            <Card class="p-4 sm:p-6 md:p-8 min-w-full">
+            <Card class="p-4 sm:p-6 md:p-8 min-w-full shadow-sm">
                         
               <Checkbox aria-describedby="news-helper">In the News</Checkbox>
               <Helper id="news-helper" class="ps-7 mb-4">News items of general Trans+ interest</Helper>
