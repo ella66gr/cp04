@@ -25,17 +25,29 @@
     TableHeadCell
   } from "flowbite-svelte";
 
-  import { AlignJustifyOutline, ChevronDownOutline } from "flowbite-svelte-icons";
+  import { AlignJustifyOutline, ChevronDownOutline, DownloadOutline, UploadOutline, TrashBinOutline } from "flowbite-svelte-icons";
+  import { onMount } from 'svelte';
 
   // Form variables
+  let profile_name = '';
   let criterion1 = '';
   let criterion2 = '';
   let criterion3 = '';
   let profile_description = '';
   let tone_of_voice = '';
   let stepValue = 150;
-  let newRssUrl = ''; // New variable for RSS input
-  let newFeedName = ''; // New variable for feed name input
+  let newRssUrl = '';
+  let newFeedName = '';
+
+  // Category tags with binding
+  let categoryTags = {
+    inTheNews: false,
+    transHealth: false,
+    genderSenseLatest: false,
+    transitionCoaching: false,
+    communityHighlights: false,
+    transRights: false
+  };
 
   // RSS Feed data with selection state
   let rssFeeds = [
@@ -46,6 +58,222 @@
     { id: 5, name: "LGBTQ Nation", url: "https://www.lgbtqnation.com/feed/", status: "paused", selected: false },
     { id: 6, name: "The Trans Advocate", url: "https://www.transadvocate.com/feed", status: "active", selected: false }
   ];
+
+  // Storage key
+  const STORAGE_KEY = 'cp04_profile_data';
+
+  // Load data from localStorage on component mount
+  onMount(() => {
+    isClient = true;
+    loadFromStorage();
+  });
+
+  // Browser-only storage functions
+  let isClient = false;
+
+  // Save data to localStorage
+  function saveToStorage() {
+    if (!isClient) return;
+    
+    const profileData = {
+      profile_name,
+      profile_description,
+      tone_of_voice,
+      criterion1,
+      criterion2,
+      criterion3,
+      stepValue,
+      categoryTags,
+      rssFeeds: rssFeeds.map(feed => ({ ...feed, selected: false })), // Don't save selection state
+      lastSaved: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profileData));
+      console.log('Profile data saved to localStorage');
+    } catch (error) {
+      console.error('Failed to save to localStorage:', error);
+      console.log('Failed to save profile data. Storage might be full.');
+    }
+  }
+
+  // Load data from localStorage
+  function loadFromStorage() {
+    if (!isClient) return;
+    
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const profileData = JSON.parse(saved);
+        
+        // Restore form fields
+        profile_name = profileData.profile_name || '';
+        profile_description = profileData.profile_description || '';
+        tone_of_voice = profileData.tone_of_voice || '';
+        criterion1 = profileData.criterion1 || '';
+        criterion2 = profileData.criterion2 || '';
+        criterion3 = profileData.criterion3 || '';
+        stepValue = profileData.stepValue || 150;
+        
+        // Restore category tags
+        if (profileData.categoryTags) {
+          categoryTags = { ...categoryTags, ...profileData.categoryTags };
+        }
+        
+        // Restore RSS feeds
+        if (profileData.rssFeeds) {
+          rssFeeds = profileData.rssFeeds;
+        }
+        
+        console.log('Profile data loaded from localStorage');
+      }
+    } catch (error) {
+      console.error('Failed to load from localStorage:', error);
+    }
+  }
+
+  // Auto-save when data changes (debounced)
+  let saveTimeout;
+  function autoSave() {
+    if (!isClient) return;
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+      saveToStorage();
+    }, 1000); // Save 1 second after last change
+  }
+
+  // Reactive statements to trigger auto-save
+  $: if (profile_name !== undefined) autoSave();
+  $: if (profile_description !== undefined) autoSave();
+  $: if (tone_of_voice !== undefined) autoSave();
+  $: if (criterion1 !== undefined) autoSave();
+  $: if (criterion2 !== undefined) autoSave();
+  $: if (criterion3 !== undefined) autoSave();
+  $: if (stepValue !== undefined) autoSave();
+  $: if (categoryTags) autoSave();
+  $: if (rssFeeds) autoSave();
+
+  // Export profile as JSON
+  function exportProfile() {
+    const profileData = {
+      profile_name,
+      profile_description,
+      tone_of_voice,
+      evaluationCriteria: [criterion1, criterion2, criterion3].filter(c => c),
+      summaryLength: stepValue,
+      categoryTags,
+      rssFeeds: rssFeeds.map(feed => ({
+        id: feed.id,
+        name: feed.name,
+        url: feed.url,
+        status: feed.status
+      })),
+      exportedAt: new Date().toISOString(),
+      version: "1.0"
+    };
+
+    const jsonString = JSON.stringify(profileData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${profile_name || 'cp04-profile'}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    console.log('Profile exported as JSON');
+  }
+
+  // Import profile from JSON
+  function importProfile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        
+        // Validate and import data
+        if (importedData.profile_name !== undefined) profile_name = importedData.profile_name;
+        if (importedData.profile_description !== undefined) profile_description = importedData.profile_description;
+        if (importedData.tone_of_voice !== undefined) tone_of_voice = importedData.tone_of_voice;
+        if (importedData.summaryLength !== undefined) stepValue = importedData.summaryLength;
+        
+        // Import criteria
+        if (importedData.evaluationCriteria && Array.isArray(importedData.evaluationCriteria)) {
+          criterion1 = importedData.evaluationCriteria[0] || '';
+          criterion2 = importedData.evaluationCriteria[1] || '';
+          criterion3 = importedData.evaluationCriteria[2] || '';
+        }
+        
+        // Import category tags
+        if (importedData.categoryTags) {
+          categoryTags = { ...categoryTags, ...importedData.categoryTags };
+        }
+        
+        // Import RSS feeds
+        if (importedData.rssFeeds && Array.isArray(importedData.rssFeeds)) {
+          rssFeeds = importedData.rssFeeds.map(feed => ({
+            ...feed,
+            selected: false
+          }));
+        }
+        
+        saveToStorage(); // Save imported data
+        alert('Profile imported successfully!');
+        console.log('Profile imported from JSON');
+      } catch (error) {
+        console.error('Failed to import profile:', error);
+        alert('Failed to import profile. Please check the file format.');
+      }
+    };
+    reader.readAsText(file);
+    
+    // Clear the input
+    event.target.value = '';
+  }
+
+  // Clear all data
+  function clearAllData() {
+    if (!isClient) return;
+    
+    if (confirm('Are you sure you want to clear all profile data? This cannot be undone.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      
+      // Reset all form fields
+      profile_name = '';
+      profile_description = '';
+      tone_of_voice = '';
+      criterion1 = '';
+      criterion2 = '';
+      criterion3 = '';
+      stepValue = 150;
+      categoryTags = {
+        inTheNews: false,
+        transHealth: false,
+        genderSenseLatest: false,
+        transitionCoaching: false,
+        communityHighlights: false,
+        transRights: false
+      };
+      
+      // Reset to default RSS feeds
+      rssFeeds = [
+        { id: 1, name: "Pink News", url: "https://www.thepinknews.com/feed/", status: "active", selected: false },
+        { id: 2, name: "Queer AF", url: "https://www.wearequeeraf.com/rss/", status: "active", selected: false },
+        { id: 3, name: "ASD News", url: "https://medicalxpress.com/rss-feed/breaking/autism-spectrum-news/", status: "paused", selected: false },
+        { id: 4, name: "Trans Lifeline Blog", url: "https://translifeline.org/blog/", status: "active", selected: false },
+        { id: 5, name: "LGBTQ Nation", url: "https://www.lgbtqnation.com/feed/", status: "paused", selected: false },
+        { id: 6, name: "The Trans Advocate", url: "https://www.transadvocate.com/feed", status: "active", selected: false }
+      ];
+      
+      console.log('All profile data cleared');
+    }
+  }
 
   // Reactive statement to get selected feeds
   $: selectedFeeds = rssFeeds.filter(feed => feed.selected);
@@ -73,7 +301,7 @@
     }
   }
 
-  // Toggle all checkboxes - using DOM onclick like your button examples
+  // Toggle all checkboxes
   const handleSelectAll = () => {
     const shouldSelectAll = !allSelected;
     rssFeeds = rssFeeds.map(feed => ({
@@ -85,7 +313,6 @@
 
   // Add new RSS feed function
   const handleAddNewSource = () => {
-    // Validate both fields
     if (!newFeedName.trim()) {
       alert('Please enter a feed name');
       return;
@@ -96,7 +323,6 @@
       return;
     }
 
-    // Simple URL validation
     try {
       new URL(newRssUrl);
     } catch {
@@ -104,24 +330,20 @@
       return;
     }
 
-    // Check for duplicate URLs
     const isDuplicateUrl = rssFeeds.some(feed => feed.url === newRssUrl.trim());
     if (isDuplicateUrl) {
       alert('This RSS feed URL already exists');
       return;
     }
 
-    // Check for duplicate names
     const isDuplicateName = rssFeeds.some(feed => feed.name.toLowerCase() === newFeedName.trim().toLowerCase());
     if (isDuplicateName) {
       alert('This feed name already exists');
       return;
     }
 
-    // Get next ID
     const nextId = Math.max(...rssFeeds.map(feed => feed.id)) + 1;
 
-    // Add new feed using both input fields
     const newFeed = {
       id: nextId,
       name: newFeedName.trim(),
@@ -132,7 +354,6 @@
 
     rssFeeds = [...rssFeeds, newFeed];
     
-    // Clear both inputs
     newFeedName = '';
     newRssUrl = '';
     
@@ -172,14 +393,39 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-      <!-- Top section input fields  -->
+      <!-- Storage Controls -->
+      <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 class="text-sm font-medium text-gray-900 dark:text-white">Profile Data</h3>
+            <p class="text-xs text-gray-600 dark:text-gray-300">Auto-saved locally • Export for use in other apps</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <Button color="light" size="sm" onclick={exportProfile}>
+              <DownloadOutline class="w-4 h-4 mr-2" />
+              Export JSON
+            </Button>
+            <label class="cursor-pointer">
+              <Button color="light" size="sm">
+                <UploadOutline class="w-4 h-4 mr-2" />
+                Import JSON
+              </Button>
+              <input type="file" accept=".json" on:change={importProfile} class="hidden" />
+            </label>
+            <Button color="red" size="sm" onclick={clearAllData}>
+              <TrashBinOutline class="w-4 h-4 mr-2" />
+              Clear All
+            </Button>
+          </div>
+        </div>
+      </div>
 
       <!-- GRID -->
       <form>
         <div class="mb-6 grid gap-8 md:grid-cols-2">
           <div>
             <Label for="profile_name" class="mb-2">Profile Name</Label>
-            <Input type="text" id="profile_name" placeholder="Name" required class="mb-6"/>
+            <Input type="text" id="profile_name" placeholder="Name" required class="mb-6" bind:value={profile_name}/>
 
             <Label for="profile_description" class="mb-2">Profile Description</Label>
             <Textarea
@@ -241,24 +487,24 @@
 
             <!-- CATEGORY TAGS -->
             <h5 class="mt-8 mb-2 text-sm">Available Category Tags (e.g. newsletter sections)</h5>
-            <Card class="p-4 sm:p-6 md:p-8 min-w-full shadow-sm">
+            <Card class="p-4 sm:p-6 md:p-8 min-w-full shadow-none">
                         
-              <Checkbox aria-describedby="news-helper">In the News</Checkbox>
+              <Checkbox aria-describedby="news-helper" bind:checked={categoryTags.inTheNews}>In the News</Checkbox>
               <Helper id="news-helper" class="ps-7 mb-4">News items of general Trans+ interest</Helper>
 
-              <Checkbox aria-describedby="health-helper">Trans+ Health</Checkbox>
+              <Checkbox aria-describedby="health-helper" bind:checked={categoryTags.transHealth}>Trans+ Health</Checkbox>
               <Helper id="health-helper" class="ps-7 mb-4">Trans+ health tips and info</Helper>
 
-              <Checkbox aria-describedby="latest-helper">GenderSense Latest</Checkbox>
+              <Checkbox aria-describedby="latest-helper" bind:checked={categoryTags.genderSenseLatest}>GenderSense Latest</Checkbox>
               <Helper id="latest-helper" class="ps-7 mb-4">Updates on what is going on at GenderSense</Helper>
 
-              <Checkbox aria-describedby="coaching-helper">Transition Coaching Tips</Checkbox>
+              <Checkbox aria-describedby="coaching-helper" bind:checked={categoryTags.transitionCoaching}>Transition Coaching Tips</Checkbox>
               <Helper id="coaching-helper" class="ps-7 mb-4">Hints and tips on making life easier</Helper>
 
-              <Checkbox aria-describedby="community-helper">GenderSense Community Highlights</Checkbox>
+              <Checkbox aria-describedby="community-helper" bind:checked={categoryTags.communityHighlights}>GenderSense Community Highlights</Checkbox>
               <Helper id="community-helper" class="ps-7 mb-4">Items from the GenderSense online community</Helper>
 
-              <Checkbox aria-describedby="rights-helper">Trans+ Issues & Rights Updates</Checkbox>
+              <Checkbox aria-describedby="rights-helper" bind:checked={categoryTags.transRights}>Trans+ Issues & Rights Updates</Checkbox>
               <Helper id="rights-helper" class="ps-7 mb-4">Community issues</Helper>
 
             </Card>
@@ -404,7 +650,7 @@
         <div class="flex justify-end mt-6">
           <div class="space-x-3">
             <Button color="alternative">Cancel</Button>
-            <Button color="green">Save Profile</Button>
+            <Button color="green" onclick={saveToStorage}>Save Profile</Button>
           </div>
         </div>
 
