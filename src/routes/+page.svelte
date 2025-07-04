@@ -649,6 +649,55 @@
 
         </div>
 
+                <!-- BUTTONS -->
+        <div class="flex justify-between mt-6">
+          <!-- Left side - Validation status -->
+          <div class="flex items-center">
+            {#if saveStatus === 'saving'}
+              <div class="flex items-center text-blue-600 dark:text-blue-400">
+                <svg class="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Saving profile...
+              </div>
+            {:else if saveStatus === 'success'}
+              <div class="flex items-center text-green-600 dark:text-green-400">
+                <CheckCircleOutline class="w-4 h-4 mr-2" />
+                Profile saved successfully
+                {#if lastSaveTime}
+                  <span class="text-xs ml-2 text-gray-500">
+                    at {lastSaveTime.toLocaleTimeString()}
+                  </span>
+                {/if}
+              </div>
+            {:else if saveStatus === 'error'}
+              <div class="flex items-center text-red-600 dark:text-red-400">
+                <ExclamationCircleOutline class="w-4 h-4 mr-2" />
+                Validation errors found
+              </div>
+            {/if}
+          </div>
+
+          <!-- Right side - Action buttons -->
+          <div class="space-x-3">
+            <Button color="alternative" onclick={cancelChanges}>Cancel</Button>
+            <Button color="green" onclick={saveProfile}>Save Profile</Button>
+          </div>
+        </div>
+
+        <!-- Validation Errors -->
+        {#if validationErrors.length > 0}
+          <div class="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <h3 class="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Please fix the following issues:</h3>
+            <ul class="text-sm text-red-700 dark:text-red-300 list-disc list-inside space-y-1">
+              {#each validationErrors as error}
+                <li>{error}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+
         <!-- FEED DISPLAY TABLE -->
         <div class="mt-6 overflow-x-auto">
 
@@ -733,55 +782,6 @@
           </Table>
 
         </div>
-
-        <!-- BUTTONS -->
-        <div class="flex justify-between mt-6">
-          <!-- Left side - Validation status -->
-          <div class="flex items-center">
-            {#if saveStatus === 'saving'}
-              <div class="flex items-center text-blue-600 dark:text-blue-400">
-                <svg class="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Saving profile...
-              </div>
-            {:else if saveStatus === 'success'}
-              <div class="flex items-center text-green-600 dark:text-green-400">
-                <CheckCircleOutline class="w-4 h-4 mr-2" />
-                Profile saved successfully
-                {#if lastSaveTime}
-                  <span class="text-xs ml-2 text-gray-500">
-                    at {lastSaveTime.toLocaleTimeString()}
-                  </span>
-                {/if}
-              </div>
-            {:else if saveStatus === 'error'}
-              <div class="flex items-center text-red-600 dark:text-red-400">
-                <ExclamationCircleOutline class="w-4 h-4 mr-2" />
-                Validation errors found
-              </div>
-            {/if}
-          </div>
-
-          <!-- Right side - Action buttons -->
-          <div class="space-x-3">
-            <Button color="alternative" onclick={cancelChanges}>Cancel</Button>
-            <Button color="green" onclick={saveProfile}>Save Profile</Button>
-          </div>
-        </div>
-
-        <!-- Validation Errors -->
-        {#if validationErrors.length > 0}
-          <div class="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <h3 class="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Please fix the following issues:</h3>
-            <ul class="text-sm text-red-700 dark:text-red-300 list-disc list-inside space-y-1">
-              {#each validationErrors as error}
-                <li>{error}</li>
-              {/each}
-            </ul>
-          </div>
-        {/if}
 
       </div>
 
