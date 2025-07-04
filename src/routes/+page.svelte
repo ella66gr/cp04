@@ -85,7 +85,12 @@
 
   // Add new RSS feed function
   const handleAddNewSource = () => {
-    // Validate URL
+    // Validate both fields
+    if (!newFeedName.trim()) {
+      alert('Please enter a feed name');
+      return;
+    }
+
     if (!newRssUrl.trim()) {
       alert('Please enter a valid RSS feed URL');
       return;
@@ -99,25 +104,27 @@
       return;
     }
 
-    // Check for duplicates
-    const isDuplicate = rssFeeds.some(feed => feed.url === newRssUrl.trim());
-    if (isDuplicate) {
+    // Check for duplicate URLs
+    const isDuplicateUrl = rssFeeds.some(feed => feed.url === newRssUrl.trim());
+    if (isDuplicateUrl) {
       alert('This RSS feed URL already exists');
       return;
     }
 
-    // Extract domain name for feed name
-    const urlObj = new URL(newRssUrl);
-    const domainName = urlObj.hostname.replace('www.', '').split('.')[0];
-    const feedName = domainName.charAt(0).toUpperCase() + domainName.slice(1);
+    // Check for duplicate names
+    const isDuplicateName = rssFeeds.some(feed => feed.name.toLowerCase() === newFeedName.trim().toLowerCase());
+    if (isDuplicateName) {
+      alert('This feed name already exists');
+      return;
+    }
 
     // Get next ID
     const nextId = Math.max(...rssFeeds.map(feed => feed.id)) + 1;
 
-    // Add new feed
+    // Add new feed using both input fields
     const newFeed = {
       id: nextId,
-      name: feedName,
+      name: newFeedName.trim(),
       url: newRssUrl.trim(),
       status: "active",
       selected: false
@@ -125,7 +132,8 @@
 
     rssFeeds = [...rssFeeds, newFeed];
     
-    // Clear the input
+    // Clear both inputs
+    newFeedName = '';
     newRssUrl = '';
     
     console.log('Added new RSS feed:', newFeed);
@@ -270,10 +278,10 @@
 
           <!-- Col 1 -->
           <div class="mb-4 col-span-1">
-            <Label for="rss_feed" class="block mb-2">Feed Name</Label>
+            <Label for="feed_name" class="block mb-2">Feed Name</Label>
             <Input 
-              type="url" 
-              id="rss_feed" 
+              type="text" 
+              id="feed_name" 
               placeholder="Example News" 
               bind:value={newFeedName}
               class="w-full mb-4"
