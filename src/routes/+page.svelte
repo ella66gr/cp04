@@ -479,24 +479,6 @@
 <!-- MAIN CONTAINER -->
 <div class="min-h-screen bg-green-100 dark:bg-gray-900">
 
-  <!-- HEADER SECTION - Full width -->
-  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0">
-
-      <!-- Top panel -->
-      <div class="text-center mt-6">
-        <h1 class="text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">
-          <span class="text-gray-500">CP04</span> Profile Editor
-        </h1>
-        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-          Ella's Marketing Content Instruction Profile (MCIP).
-        </p>
-      </div>
-   
-    </div>
-  </div>
-
-  <!-- BODY SECTION -->
   <!-- MAIN PANEL - Full width -->
   <div class="bg-white dark:bg-gray-800 border-l border-r border-b border-gray-200 dark:border-gray-700 mt-0">
 
