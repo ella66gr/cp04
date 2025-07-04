@@ -155,6 +155,21 @@
 
   // Export profile as JSON
   function exportProfile() {
+    // Generate default filename
+    const defaultFilename = profile_name 
+      ? `${profile_name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-profile`
+      : 'cp04-profile';
+    
+    // Let user customize filename
+    const userFilename = prompt('Enter filename for export:', defaultFilename);
+    if (userFilename === null) return; // User cancelled
+    
+    // Clean the filename and ensure it's valid
+    const cleanFilename = userFilename.trim() || defaultFilename;
+    const finalFilename = cleanFilename.endsWith('.json') 
+      ? cleanFilename 
+      : `${cleanFilename}.json`;
+
     const profileData = {
       profile_name,
       profile_description,
@@ -178,13 +193,13 @@
     
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${profile_name || 'cp04-profile'}.json`;
+    a.download = finalFilename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    console.log('Profile exported as JSON');
+    console.log('Profile exported as:', finalFilename);
   }
 
   // Define a type for RSS Feed
@@ -469,6 +484,12 @@
     console.log('Added new RSS feed:', newFeed);
   };
 
+  // Function to trigger file input for import
+  let fileInput: HTMLInputElement | null = null;
+  const handleImportClick = () => {
+    fileInput?.click();
+  };
+
 </script>
 
 <!-- Page title -->
@@ -496,13 +517,17 @@
               <DownloadOutline class="w-4 h-4 mr-2" />
               Export JSON
             </Button>
-            <label class="cursor-pointer">
-              <Button color="light" size="sm">
-                <UploadOutline class="w-4 h-4 mr-2" />
-                Import JSON
-              </Button>
-              <input type="file" accept=".json" on:change={importProfile} class="hidden" />
-            </label>
+            <input 
+              type="file" 
+              accept=".json" 
+              on:change={importProfile} 
+              bind:this={fileInput}
+              class="hidden" 
+            />
+            <Button color="light" size="sm" onclick={handleImportClick}>
+              <UploadOutline class="w-4 h-4 mr-2" />
+              Import JSON
+            </Button>
             <Button color="red" size="sm" onclick={clearAllData}>
               <TrashBinOutline class="w-4 h-4 mr-2" />
               Clear All
@@ -551,25 +576,28 @@
             <Label for="criterion1" class="block mb-2">Evaluation Criteria for Sources</Label>
             
             <Select id="criterion1" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion1}>
+              <option value="">Select evaluation criteria</option>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
-              <option value="warm">Empowering & Positive</option>
+              <option value="empoweringPositive">Empowering & Positive</option>
               <option value="currentUpToDate">Current & up to date</option>
             </Select>
               
             <Label for="criterion2" class="block mb-2">Select</Label>
             <Select id="criterion2" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion2}>
+              <option value="">Select evaluation criteria</option>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
-              <option value="warm">Empowering & Positive</option>
+              <option value="empoweringPositive">Empowering & Positive</option>
               <option value="currentUpToDate">Current & up to date</option>
             </Select>
 
             <Label for="criterion3" class="block mb-2">Select</Label>
             <Select id="criterion3" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion3}>
+              <option value="">Select evaluation criteria</option>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
-              <option value="warm">Empowering & Positive</option>
+              <option value="empoweringPositive">Empowering & Positive</option>
               <option value="currentUpToDate">Current & up to date</option>
             </Select>
 
