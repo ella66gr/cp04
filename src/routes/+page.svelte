@@ -29,6 +29,11 @@
   } from "flowbite-svelte";
 
   import { AlignJustifyOutline } from "flowbite-svelte-icons";
+
+  // Function to handle menu button click in table header
+  function handleMenuClick() {
+    console.log("Menu button clicked");
+  }
   
   let criterion1 = ''; // Default value for the first criterion
   let criterion2 = ''; // Default value for the second criterion
@@ -39,8 +44,10 @@
 
 </script>
 
+<!-- Page title -->
+
 <svelte:head>
-    <title>CP04 Profile Editor</title> <!-- Page title --> 
+    <title>CP04 Profile Editor</title>
 </svelte:head>
 
 <!-- MAIN CONTAINER -->
@@ -220,7 +227,15 @@
               <TableHeadCell>Source Name</TableHeadCell>
               <TableHeadCell>RSS Feed URL</TableHeadCell>
               <TableHeadCell>Status</TableHeadCell>
-              <TableHeadCell><AlignJustifyOutline /></TableHeadCell>
+              <TableHeadCell>
+                <button
+                  type="button"
+                  on:click={handleMenuClick}
+                  class="pr-0 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                >
+                  <AlignJustifyOutline class="w-5 h-5" />
+                </button>
+              </TableHeadCell>
             </TableHead>
           <TableBody>
             <TableBodyRow>
