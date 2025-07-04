@@ -524,10 +524,10 @@
               class="mb-6"
               placeholder="Optional profile description and purpose …"
               bind:value={profile_description} 
-              rows={3}
+              rows={6}
             />
 
-            <Label for="tone_of_voice" class="mb-2">Tone of Voice</Label>
+            <Label for="tone_of_voice" class="mb-2 mt-0">Tone of Voice</Label>
             <Select
               id="tone_of_voice"
               class="block mb-6 text-sm font-medium text-gray-900 dark:text-white"
@@ -550,15 +550,15 @@
             <!-- EVALUATION CRITERIA -->
             <Label for="criterion1" class="block mb-2">Evaluation Criteria for Sources</Label>
             
-            <Select id="criterion1" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion1}>
+            <Select id="criterion1" class="mb-4" placeholder="Select evaluation criteria" bind:value={criterion1}>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
               <option value="warm">Empowering & Positive</option>
               <option value="currentUpToDate">Current & up to date</option>
             </Select>
               
-            <Label for="criterion2" class="block mb-2">Second Evaluation Criteria</Label>
-            <Select id="criterion2" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion2}>
+            <Label for="criterion2" class="block mb-4">Second Evaluation Criteria</Label>
+            <Select id="criterion2" class="mb-8" placeholder="Select evaluation criteria" bind:value={criterion2}>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
               <option value="warm">Empowering & Positive</option>
