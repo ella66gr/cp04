@@ -16,21 +16,20 @@
     A,
     Select,
     Badge, 
-    Breadcrumb,
-    BreadcrumbItem
+    Range
   } from 'flowbite-svelte';
   
-  let criterion1 = '';
-  let criterion2 = '';
-  let criterion3 = '';
-  let criterion4 = ''; 
-  let profile_description = '';
-  let tone_of_voice = '';
+  let criterion1 = ''; // Default value for the first criterion
+  let criterion2 = ''; // Default value for the second criterion
+  let criterion3 = ''; // Default value for the third criterion
+  let profile_description = ''; // Default value for the profile description
+  let tone_of_voice = ''; // Default value for the tone of voice
+  let stepValue = 150; // Default step value for the range input
 
 </script>
 
 <svelte:head>
-    <title>CP04 Profile Editor</title>
+    <title>CP04 Profile Editor</title> <!-- Page title --> 
 </svelte:head>
 
 <!-- MAIN CONTAINER -->
@@ -77,6 +76,11 @@
                 <option value="empowering_activist">Empowering / Activist</option>
                 <option value="community_caring">Community & Caring</option>
               </Select>
+
+              <Label class="mb-2 mt-8">Summary Text Length (max 400)</Label>
+              <Range id="range-steps" min="0" max="400" bind:value={stepValue} step="10" />
+              <p class="mt-2">Value: {stepValue}</p>
+
           </div>
 
           <div>
