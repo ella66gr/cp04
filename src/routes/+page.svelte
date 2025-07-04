@@ -18,6 +18,17 @@
     Badge, 
     Range
   } from 'flowbite-svelte';
+
+  import {
+    Table,
+    TableBody,
+    TableBodyCell,
+    TableBodyRow,
+    TableHead,
+    TableHeadCell
+  } from "flowbite-svelte";
+
+  import { AlignJustifyOutline } from "flowbite-svelte-icons";
   
   let criterion1 = ''; // Default value for the first criterion
   let criterion2 = ''; // Default value for the second criterion
@@ -66,16 +77,43 @@
       <form>
         <div class="mb-6 grid gap-8 md:grid-cols-2">
           <div>
-            <Label for="profile_name" class="mb-2">Profile Name</Label>
+            <Label
+              for="profile_name"
+              class="mb-2">
+              Profile Name
+            </Label>
+
             <Input type="text" id="first_name" placeholder="Name" required class="mb-6"/>
-            <Label for="profile_description" class="mb-2">Profile Description</Label>
-            <Textarea class="mb-6" label="Description" placeholder="Optional profile description and purpose …" bind:value={profile_description} rows={3} />
-            <Label for="criterion1" class="mb-2">Tone of Voice</Label>
-              <Select class="mb-6" label="Tone of Voice" placeholder="Select tone of voice" bind:value={tone_of_voice}>
-                <option value="professional_supportive">Professional / Supportive</option>
-                <option value="empowering_activist">Empowering / Activist</option>
-                <option value="community_caring">Community & Caring</option>
-              </Select>
+
+            <Label
+              for="profile_description"
+              class="mb-2">
+              Profile Description
+            </Label>
+
+            <Textarea
+              id="profile_description"
+              class="mb-6"
+              placeholder="Optional profile description and purpose …"
+              bind:value={profile_description} rows={3}
+            />
+
+            <Label
+              for="tone_of_voice"
+              class="mb-2">
+              Tone of Voice
+            </Label>
+
+            <Select
+              id="tone_of_voice"
+              class="block mb-6 text-sm font-medium text-gray-900 dark:text-white"
+              placeholder="Select tone of voice"
+              bind:value={tone_of_voice}
+            >
+              <option value="professional_supportive">Professional / Supportive</option>
+              <option value="empowering_activist">Empowering / Activist</option>
+              <option value="community_caring">Community & Caring</option>
+            </Select>
 
               <Label class="mb-2 mt-8">Summary Text Length (max 400)</Label>
               <Range id="range-steps" min="0" max="400" bind:value={stepValue} step="10" />
@@ -87,22 +125,42 @@
 
             <!-- EVALUATION CRITERIA -->
 
-            <Label for="criterion1" class="mb-2">Evaluation Criteria for Sources</Label>
-              <Select class="mb-6 text-red-600" label="Evaluation Criteria" placeholder="Select evaluation criteria" bind:value={criterion1}>
+            <label
+              for="criteria"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Evaluation Criteria for Sources
+            </label>
+            
+              <Select
+                id="criteria"
+                class="mb-6"
+                placeholder="Select evaluation criteria"
+                bind:value={criterion1}
+              >
                 <option value="articleQuality">Article Quality</option>
                 <option value="genderSenseAlignment">GenderSense Alignment</option>
                 <option value="warm">Empowering & Positive</option>
                 <option value="currentUpToDate">Current & up to date</option>
               </Select>
-  
-              <Select  class="mb-6" label="Evaluation Criteria" placeholder="Select evaluation criteria" bind:value={criterion2}>
+              
+              <Select
+                id="criteria"
+                class="mb-6"
+                placeholder="Select evaluation criteria"
+                bind:value={criterion2}
+              >
                 <option value="articleQuality">Article Quality</option>
                 <option value="genderSenseAlignment">GenderSense Alignment</option>
                 <option value="warm">Empowering & Positive</option>
                 <option value="currentUpToDate">Current & up to date</option>
               </Select>
 
-              <Select  class="mb-6" label="Evaluation Criteria"  placeholder="Select evaluation criteria" bind:value={criterion3}>
+              <Select
+                id="criteria"
+                class="mb-6"
+                placeholder="Select evaluation criteria"
+                bind:value={criterion3}
+              >
                 <option value="articleQuality">Article Quality</option>
                 <option value="genderSenseAlignment">GenderSense Alignment</option>
                 <option value="warm">Empowering & Positive</option>
@@ -140,62 +198,86 @@
 
       </form>
 
-      <!-- Bottom grid section -->
+      <!-- FORM SECTION WITH RSS FEEDS -->
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold mb-4">RSS Feeds</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-4">Add RSS feeds to be used for content generation.</p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
-        <div>
-          <Card class="p-4 sm:p-6 md:p-8 min-w-full">
-          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">CARD 1. Noteworthy technology acquisitions 2021</h5>
-          <p class="leading-tight font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-          </Card>
+        <form>
+          <div class="mb-4">
+            <Label for="rss_feed" class="block mb-2">RSS Feed URL</Label>
+            <Input type="url" id="rss_feed" placeholder="https://example.com/rss" required class="w-full mb-4"/>
+          </div>
+          <Button color="primary">Add New Source</Button>
+        </form>
 
+        <!-- FEED DISPLAY TABLE -->
 
+        <div class="mt-8 overflow-x-auto">
+
+          <Table shadow>
+            <TableHead>
+              <TableHeadCell>Source Name</TableHeadCell>
+              <TableHeadCell>RSS Feed URL</TableHeadCell>
+              <TableHeadCell>Status</TableHeadCell>
+              <TableHeadCell><AlignJustifyOutline /></TableHeadCell>
+            </TableHead>
+          <TableBody>
+            <TableBodyRow>
+              <TableBodyCell>Pink News</TableBodyCell>
+              <TableBodyCell>https://www.thepinknews.com/feed/</TableBodyCell>
+              <TableBodyCell><Badge color="green">Active</Badge></TableBodyCell>
+              <TableBodyCell><Checkbox></Checkbox></TableBodyCell>
+            </TableBodyRow>
+            <TableBodyRow>
+              <TableBodyCell>Queer AF</TableBodyCell>
+              <TableBodyCell>https://www.wearequeeraf.com/rss/</TableBodyCell>
+              <TableBodyCell><Badge color="green">Active</Badge></TableBodyCell>
+              <TableBodyCell><Checkbox></Checkbox></TableBodyCell>
+            </TableBodyRow>
+            <TableBodyRow>
+              <TableBodyCell>ASD News</TableBodyCell>
+              <TableBodyCell>https://medicalxpress.com/rss-feed/breaking/autism-spectrum-news/</TableBodyCell>
+              <TableBodyCell><Badge color="red">Paused</Badge></TableBodyCell>
+              <TableBodyCell><Checkbox></Checkbox></TableBodyCell>
+            </TableBodyRow>
+            <TableBodyRow>
+              <TableBodyCell>Trans Lifeline Blog</TableBodyCell>
+              <TableBodyCell>https://translifeline.org/blog/</TableBodyCell>
+              <TableBodyCell><Badge color="green">Active</Badge></TableBodyCell>
+              <TableBodyCell><Checkbox></Checkbox></TableBodyCell>
+            </TableBodyRow>
+            <TableBodyRow>
+              <TableBodyCell>LGBTQ Nation</TableBodyCell>
+              <TableBodyCell>https://www.lgbtqnation.com/feed/</TableBodyCell>
+              <TableBodyCell><Badge color="red">Paused</Badge></TableBodyCell>
+              <TableBodyCell><Checkbox></Checkbox></TableBodyCell>
+            </TableBodyRow>
+            <TableBodyRow>
+              <TableBodyCell>The Trans Advocate</TableBodyCell>
+              <TableBodyCell>https://www.transadvocate.com/feed</TableBodyCell>
+              <TableBodyCell><Badge color="green">Active</Badge></TableBodyCell>
+              <TableBodyCell><Checkbox></Checkbox></TableBodyCell>
+            </TableBodyRow>
+          </TableBody>
+        </Table>
 
         </div>
 
-        <div>
-          <Card class="p-4 sm:p-6 md:p-8 min-w-full">
-          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">CARD 2. Noteworthy technology acquisitions 2021</h5>
-          <p class="leading-tight font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-          </Card>
-
-        </div>
-
-        <div>
-          <Card class="p-4 sm:p-6 md:p-8 min-w-full">
-          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">CARD 3. Noteworthy technology acquisitions 2021</h5>
-          <p class="leading-tight font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-          </Card>
-        </div>
-
-        <div>
-          <Card class="p-4 sm:p-6 md:p-8 min-w-full">
-          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">CARD 4. Noteworthy technology acquisitions 2021</h5>
-          <p class="leading-tight font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-          </Card>
-        </div>
-
-        <div>
-          <Card class="rounded-none shadow-none min-w-full">
-          <h5>CARD 4A. Noteworthy technology acquisitions 2021</h5>
-          <p>Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-          </Card>
-        </div>
+        <!-- BUTTONS -->
+        <div class="flex justify-end mt-6">
+          <form class="space-x-3">
+            <Button color="alternative">Cancel</Button>
+            <Button color="green">Save Profile</Button>
+          </form>
+         </div>
+        
+<!-- -->
 
       </div>
-      <!-- End of Grid Section -->
-
-      <!-- Card -->
-      <div class="py-6 px-0">
-        <Card class="p-4 sm:p-6 md:p-8">
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">CARD 5. Noteworthy technology acquisitions 2021</h5>
-        <p class="leading-tight font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-        </Card>
-      </div>
-
-
 
     </div>
 
   </div>
+
 </div>
