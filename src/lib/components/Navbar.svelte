@@ -6,7 +6,6 @@
 		NavBrand,
 		NavUl,
 		NavLi,
-		NavHamburger,
 		Dropdown,
 		DropdownItem,
 		DarkMode
@@ -17,26 +16,26 @@
 	import { derived } from 'svelte/store';
 
 	const activeUrl = derived(page, ($page) => $page.url.pathname);
+	let activeUrlValue: string;
+	$: activeUrl.subscribe(value => activeUrlValue = value);
 </script>
 
 <Navbar>
 	<NavBrand href="/">
 		<span
-			class="self-center text-xl font-semibold whitespace-nowrap text-green-600 dark:text-green-400"
-			>CP04</span
+			class="self-center text-4xl font-semibold whitespace-nowrap text-gray-500 dark:text-gray-400"
+			>CP04 <span class="text-black">Profile Editor</span></span
 		>
 	</NavBrand>
 
-	<NavHamburger />
-
-	<NavUl {activeUrl}>
+	<NavUl activeUrl={activeUrlValue}>
 		<NavLi href="/">Home</NavLi>
 
 		<!-- Inputs group -->
 		<NavLi class="cursor-pointer">
 			Nav 1<ChevronDownOutline class="text-primary-800 ms-2 inline h-6 w-6 dark:text-white" />
 		</NavLi>
-		<Dropdown simple class="w-44" {activeUrl}>
+		<Dropdown simple class="w-44" activeUrl={activeUrlValue}>
 			<DropdownItem href="/nav-1">Nav-1</DropdownItem>
 		</Dropdown>
 
@@ -44,7 +43,7 @@
 		<NavLi class="cursor-pointer">
 			Nav 2<ChevronDownOutline class="text-primary-800 ms-2 inline h-6 w-6 dark:text-white" />
 		</NavLi>
-		<Dropdown simple class="w-52" {activeUrl}>
+		<Dropdown simple class="w-52" activeUrl={activeUrlValue}>
 			<DropdownItem href="/nav-2">Nav-2</DropdownItem>
 		</Dropdown>
 	</NavUl>

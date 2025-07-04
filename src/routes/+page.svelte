@@ -25,7 +25,7 @@
     TableHeadCell
   } from "flowbite-svelte";
 
-  import { AlignJustifyOutline, ChevronDownOutline, DownloadOutline, UploadOutline, TrashBinOutline } from "flowbite-svelte-icons";
+  import { AlignJustifyOutline, ChevronDownOutline, DownloadOutline, UploadOutline, TrashBinOutline, CheckCircleOutline, ExclamationCircleOutline } from "flowbite-svelte-icons";
   import { onMount } from 'svelte';
 
   // Form variables
@@ -133,7 +133,7 @@
   }
 
   // Auto-save when data changes (debounced)
-  let saveTimeout;
+  let saveTimeout: ReturnType<typeof setTimeout> | undefined;
   function autoSave() {
     if (!isClient) return;
     clearTimeout(saveTimeout);
@@ -187,15 +187,26 @@
     console.log('Profile exported as JSON');
   }
 
+  // Define a type for RSS Feed
+  type RSSFeed = {
+    id: number;
+    name: string;
+    url: string;
+    status: string;
+    selected: boolean;
+    [key: string]: any; // Allow extra properties if needed
+  };
+
   // Import profile from JSON
-  function importProfile(event) {
-    const file = event.target.files[0];
+  function importProfile(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const importedData = JSON.parse(e.target.result);
+        const importedData = JSON.parse((e.target as FileReader).result as string);
         
         // Validate and import data
         if (importedData.profile_name !== undefined) profile_name = importedData.profile_name;
@@ -217,7 +228,7 @@
         
         // Import RSS feeds
         if (importedData.rssFeeds && Array.isArray(importedData.rssFeeds)) {
-          rssFeeds = importedData.rssFeeds.map(feed => ({
+          rssFeeds = importedData.rssFeeds.map((feed: RSSFeed) => ({
             ...feed,
             selected: false
           }));
@@ -234,10 +245,108 @@
     reader.readAsText(file);
     
     // Clear the input
-    event.target.value = '';
+    input.value = '';
   }
 
-  // Clear all data
+  // Profile validation and saving
+  let saveStatus: null | 'saving' | 'success' | 'error' = null; // null, 'saving', 'success', 'error'
+  let validationErrors: string[] = [];
+  let lastSaveTime: Date | null = null;
+
+  // Validate profile completeness
+  function validateProfile() {
+    const errors = [];
+    
+    if (!profile_name.trim()) {
+      errors.push('Profile name is required');
+    }
+    
+    if (!tone_of_voice) {
+      errors.push('Tone of voice must be selected');
+    }
+    
+    const selectedCriteria = [criterion1, criterion2, criterion3].filter(c => c);
+    if (selectedCriteria.length === 0) {
+      errors.push('At least one evaluation criteria must be selected');
+    }
+    
+    const activeFeeds = rssFeeds.filter(feed => feed.status === 'active');
+    if (activeFeeds.length === 0) {
+      errors.push('At least one RSS feed must be active');
+    }
+    
+    const selectedCategories = Object.values(categoryTags).filter(Boolean);
+    if (selectedCategories.length === 0) {
+      errors.push('At least one category tag must be selected');
+    }
+    
+    return errors;
+  }
+
+  // Enhanced save profile function
+  function saveProfile() {
+    saveStatus = 'saving';
+    validationErrors = validateProfile();
+    
+    if (validationErrors.length > 0) {
+      saveStatus = 'error';
+      return;
+    }
+    
+    try {
+      // Save to localStorage
+      saveToStorage();
+      
+      // Simulate preparing for newsletter app integration
+      const newsletterData = prepareForNewsletterApp();
+      console.log('Profile ready for newsletter app:', newsletterData);
+      
+      saveStatus = 'success';
+      lastSaveTime = new Date();
+      
+      // Reset status after 3 seconds
+      setTimeout(() => {
+        saveStatus = null;
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Failed to save profile:', error);
+      saveStatus = 'error';
+      validationErrors = ['Failed to save profile. Please try again.'];
+    }
+  }
+
+  // Prepare data specifically for newsletter app
+  function prepareForNewsletterApp() {
+    return {
+      profileId: profile_name.toLowerCase().replace(/\s+/g, '-'),
+      name: profile_name,
+      description: profile_description,
+      settings: {
+        toneOfVoice: tone_of_voice,
+        summaryLength: stepValue,
+        evaluationCriteria: [criterion1, criterion2, criterion3].filter(c => c)
+      },
+      contentSources: rssFeeds.filter(feed => feed.status === 'active').map(feed => ({
+        name: feed.name,
+        url: feed.url,
+        type: 'rss'
+      })),
+      contentCategories: Object.entries(categoryTags)
+        .filter(([key, value]) => value)
+        .map(([key, value]) => key),
+      lastUpdated: new Date().toISOString()
+    };
+  }
+
+  // Cancel function - revert to last saved state
+  function cancelChanges() {
+    if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
+      loadFromStorage();
+      saveStatus = null;
+      validationErrors = [];
+    }
+  }
   function clearAllData() {
     if (!isClient) return;
     
@@ -460,7 +569,6 @@
             <Label for="criterion1" class="block mb-2">Evaluation Criteria for Sources</Label>
             
             <Select id="criterion1" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion1}>
-              <option value="">Select evaluation criteria</option>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
               <option value="warm">Empowering & Positive</option>
@@ -469,7 +577,6 @@
               
             <Label for="criterion2" class="block mb-2">Second Evaluation Criteria</Label>
             <Select id="criterion2" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion2}>
-              <option value="">Select evaluation criteria</option>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
               <option value="warm">Empowering & Positive</option>
@@ -478,7 +585,6 @@
 
             <Label for="criterion3" class="block mb-2">Third Evaluation Criteria</Label>
             <Select id="criterion3" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion3}>
-              <option value="">Select evaluation criteria</option>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
               <option value="warm">Empowering & Positive</option>
@@ -647,12 +753,53 @@
         </div>
 
         <!-- BUTTONS -->
-        <div class="flex justify-end mt-6">
+        <div class="flex justify-between mt-6">
+          <!-- Left side - Validation status -->
+          <div class="flex items-center">
+            {#if saveStatus === 'saving'}
+              <div class="flex items-center text-blue-600 dark:text-blue-400">
+                <svg class="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Saving profile...
+              </div>
+            {:else if saveStatus === 'success'}
+              <div class="flex items-center text-green-600 dark:text-green-400">
+                <CheckCircleOutline class="w-4 h-4 mr-2" />
+                Profile saved successfully
+                {#if lastSaveTime}
+                  <span class="text-xs ml-2 text-gray-500">
+                    at {lastSaveTime.toLocaleTimeString()}
+                  </span>
+                {/if}
+              </div>
+            {:else if saveStatus === 'error'}
+              <div class="flex items-center text-red-600 dark:text-red-400">
+                <ExclamationCircleOutline class="w-4 h-4 mr-2" />
+                Validation errors found
+              </div>
+            {/if}
+          </div>
+
+          <!-- Right side - Action buttons -->
           <div class="space-x-3">
-            <Button color="alternative">Cancel</Button>
-            <Button color="green" onclick={saveToStorage}>Save Profile</Button>
+            <Button color="alternative" onclick={cancelChanges}>Cancel</Button>
+            <Button color="green" onclick={saveProfile}>Save Profile</Button>
           </div>
         </div>
+
+        <!-- Validation Errors -->
+        {#if validationErrors.length > 0}
+          <div class="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <h3 class="text-sm font-medium text-red-800 dark:text-red-200 mb-2">Please fix the following issues:</h3>
+            <ul class="text-sm text-red-700 dark:text-red-300 list-disc list-inside space-y-1">
+              {#each validationErrors as error}
+                <li>{error}</li>
+              {/each}
+            </ul>
+          </div>
+        {/if}
 
       </div>
 
