@@ -227,20 +227,20 @@
 
         <!-- FEED DISPLAY TABLE -->
         <div class="mt-8 overflow-x-auto">
-          
-          <!-- Selection Info Bar -->
-          {#if hasSelectedFeeds}
-            <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <span class="text-sm text-blue-800 dark:text-blue-200">
-                {selectedFeeds.length} feed{selectedFeeds.length !== 1 ? 's' : ''} selected
-              </span>
-            </div>
-          {/if}
 
           <Table shadow>
             <TableHead>
               <TableHeadCell>Source Name</TableHeadCell>
-              <TableHeadCell>RSS Feed URL</TableHeadCell>
+              <TableHeadCell>
+                <div class="flex items-center justify-between">
+                  <span>RSS Feed URL</span>
+                  {#if hasSelectedFeeds}
+                    <span class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 px-2 py-1 rounded-full ml-2">
+                      {selectedFeeds.length} selected
+                    </span>
+                  {/if}
+                </div>
+              </TableHeadCell>
               <TableHeadCell>Status</TableHeadCell>
               <TableHeadCell>
                 <div class="flex items-center gap-2">
@@ -263,9 +263,9 @@
                       <ChevronDownOutline class="w-3 h-3 ml-1" />
                     </Button>
                     
-                    <Dropdown triggeredBy="#dropdown-button" class="w-48">
+                    <Dropdown triggeredBy="#dropdown-button" class="w-48" placement="top">
                       <DropdownItem 
-                        on:click={toggleSelectedFeeds}
+                        onclick={toggleSelectedFeeds}
                         disabled={!hasSelectedFeeds}
                         class="flex items-center gap-2"
                       >
@@ -275,7 +275,7 @@
                         Toggle Active/Pause
                       </DropdownItem>
                       <DropdownItem 
-                        on:click={deleteSelectedFeeds}
+                        onclick={deleteSelectedFeeds}
                         disabled={!hasSelectedFeeds}
                         class="flex items-center gap-2 text-red-600 dark:text-red-400"
                       >
