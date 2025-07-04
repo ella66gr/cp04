@@ -521,10 +521,10 @@
             <Label for="profile_description" class="mb-2">Profile Description</Label>
             <Textarea
               id="profile_description"
-              class="mb-6"
+              class="mb-6 text-md font-medium text-gray-900 dark:text-white"
               placeholder="Optional profile description and purpose …"
               bind:value={profile_description} 
-              rows={6}
+              rows={5}
             />
 
             <Label for="tone_of_voice" class="mb-2 mt-0">Tone of Voice</Label>
@@ -550,22 +550,22 @@
             <!-- EVALUATION CRITERIA -->
             <Label for="criterion1" class="block mb-2">Evaluation Criteria for Sources</Label>
             
-            <Select id="criterion1" class="mb-4" placeholder="Select evaluation criteria" bind:value={criterion1}>
+            <Select id="criterion1" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion1}>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
               <option value="warm">Empowering & Positive</option>
               <option value="currentUpToDate">Current & up to date</option>
             </Select>
               
-            <Label for="criterion2" class="block mb-4">Second Evaluation Criteria</Label>
-            <Select id="criterion2" class="mb-8" placeholder="Select evaluation criteria" bind:value={criterion2}>
+            <Label for="criterion2" class="block mb-2">Select</Label>
+            <Select id="criterion2" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion2}>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
               <option value="warm">Empowering & Positive</option>
               <option value="currentUpToDate">Current & up to date</option>
             </Select>
 
-            <Label for="criterion3" class="block mb-2">Third Evaluation Criteria</Label>
+            <Label for="criterion3" class="block mb-2">Select</Label>
             <Select id="criterion3" class="mb-6" placeholder="Select evaluation criteria" bind:value={criterion3}>
               <option value="articleQuality">Article Quality</option>
               <option value="genderSenseAlignment">GenderSense Alignment</option>
