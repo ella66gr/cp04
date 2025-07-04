@@ -39,13 +39,6 @@
 			<DropdownItem href="/nav-1">Nav-1</DropdownItem>
 		</Dropdown>
 
-		<!-- Components group -->
-		<NavLi class="cursor-pointer">
-			Nav 2<ChevronDownOutline class="text-primary-800 ms-2 inline h-6 w-6 dark:text-white" />
-		</NavLi>
-		<Dropdown simple class="w-52" activeUrl={activeUrlValue}>
-			<DropdownItem href="/nav-2">Nav-2</DropdownItem>
-		</Dropdown>
 	</NavUl>
 
 	<!-- ✅ Valid placement of toggle outside <NavUl> to avoid nesting inside <button> -->
